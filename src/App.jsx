@@ -34,20 +34,20 @@ const navigation = [
   { label: 'About', to: '/about' },
   { label: 'Skills', to: '/skills' },
   { label: 'Contact', to: '/contact' },
-  { label: 'Project', to: '/#projects' },
+  { label: 'Projects', to: '/#projects' },
 ]
 
 const technologies = [
   { name: 'Python', mark: '🐍', color: 'python' },
   { name: 'PyTorch', mark: '◔', color: 'pytorch' },
   { name: 'Transformers', mark: '🤗', color: 'hugging' },
-  { name: 'L.Ms', mark: '♧', color: 'llms' },
+  { name: 'LLMs', mark: '✳', color: 'llms' },
   { name: 'NLP', mark: '▤', color: 'nlp' },
   { name: 'Machine Learning', mark: '⚙', color: 'machine' },
   { name: 'RAG', mark: '▱', color: 'rag' },
   { name: 'Hugging Face', mark: '🤗', color: 'hugging' },
   { name: 'Git', mark: '◆', color: 'git' },
-  { name: '12.8', mark: '▤', color: 'database' },
+  { name: 'CUDA', mark: '▤', color: 'database' },
 ]
 
 const projects = [
@@ -123,12 +123,12 @@ const highlights = [
   'Generative AI Capstone (Kaggle)',
   'Nine Kaggle AI/ML learning badges',
   'CoreTech Internship (Flutter App Dev)',
-  'QSAI — AI Events Leadership',
+  'Participation in AI-focused technical events',
   'HTML & CSS (Professional Training)',
 ]
 
 const goals = [
-  'Complete my BS(AI) with a strong GPA (> 2.5)',
+  'Keep growing through advanced study and AI/ML research',
   'Pursue a Master’s in AI/Robotics (preferably in Spain or France)',
   'Work on a novel, publishable research project',
   'Compete in Kaggle competitions',
@@ -218,6 +218,7 @@ function resetCardTilt(event) {
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const prefersReducedMotion = useReducedMotion()
 
   return (
     <header className="site-header" id="top">
@@ -236,7 +237,7 @@ function Header() {
         </button>
         <nav className={`top-nav ${menuOpen ? 'is-open' : ''}`} aria-label="Main navigation">
           {navigation.map((item) => {
-            const isCurrent = item.label === 'Project'
+            const isCurrent = item.label === 'Projects'
               ? location.pathname === '/' && location.hash === '#projects'
               : location.pathname === item.to && location.hash !== '#projects'
 
@@ -247,7 +248,7 @@ function Header() {
               onClick={() => setMenuOpen(false)}
             >
               {item.label}
-              {isCurrent && <motion.span className="nav-underline" layoutId="nav-underline" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              {isCurrent && <motion.span className="nav-underline" layoutId="nav-underline" transition={prefersReducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }} />}
             </NavLink>
           })}
         </nav>
@@ -265,12 +266,13 @@ function SectionHeading({ eyebrow, children, className = '' }) {
   )
 }
 
-function Reveal({ children, className = '', delay = 0 }) {
+function Reveal({ children, className = '', delay = 0, id }) {
   const prefersReducedMotion = useReducedMotion()
 
   return (
     <motion.div
       className={className}
+      id={id}
       data-reveal
       initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -307,7 +309,7 @@ function DetailCard({ icon: Icon, title, children, className = '' }) {
 function AboutPage() {
   const personalDetails = [
     { label: 'Name', value: 'Mohsin Raza', icon: UserRound },
-    { label: 'Department', value: 'AI', icon: BrainCircuit },
+    { label: 'CGPA', value: '2.5 / 4.0', icon: BadgeCheck },
     { label: 'University', value: 'QUEST, Nawabshah', icon: GraduationCap },
     { label: 'Graduation Date', value: '07/30/2026', icon: BadgeCheck },
     { label: 'Location', value: 'Nawabshah, Pakistan', icon: MapPin },
@@ -357,7 +359,7 @@ function AboutPage() {
             ))}
           </ol>
         </DetailCard></Reveal>
-        <Reveal delay={0.12}><DetailCard icon={Star} title="Key Highlights">
+        <Reveal delay={0.12} id="experience"><DetailCard icon={Star} title="Key Highlights">
           <ul className="check-list highlight-list">
             {highlights.map((highlight) => <li key={highlight}><Check size={16} aria-hidden="true" /><span>{highlight}</span></li>)}
           </ul>
@@ -421,7 +423,7 @@ function SkillsPage() {
     <main className="content-page skills-page">
       <PageHero
         eyebrow="MY SKILLS"
-        title="Tools We Build"
+        title="Tools I Use to Build"
         accent="Intelligent Systems"
         description="I work with modern technologies across AI, ML, NLP and development to turn ideas into real-world solutions."
         image="/assets/skills-ai-graphic.jpg"
@@ -532,7 +534,7 @@ function TechStrip() {
         <h2 id="tech-heading">Technologies <span>I Work With</span></h2>
       </div>
       <p className="tech-subtitle"><em>Tools and technologies I use to build intelligent systems, work with LLMs and explore AI solutions.</em></p>
-      <div className="tech-track" aria-label="AI and development technologies">
+      <div className="tech-track" role="group" tabIndex={0} aria-label="AI and development technologies; scroll horizontally to see all technologies">
         {technologies.map((technology) => (
           <motion.div className="tech-card" key={technology.name} data-reveal whileHover={{ y: -4 }} transition={{ type: 'spring', stiffness: 360, damping: 24 }}>
             <span className={`tech-mark ${technology.color}`} aria-hidden="true">{technology.mark}</span>
@@ -598,6 +600,7 @@ function Projects() {
           <article
             className="project-card"
             key={project.number}
+            id={project.number === '01' ? 'research' : undefined}
             data-reveal
             onPointerMove={handleCardTilt}
             onPointerLeave={resetCardTilt}
@@ -657,7 +660,7 @@ function Footer() {
       <div className="footer-grid">
         <div className="footer-profile">
           <Link className="wordmark footer-wordmark" to="/"><span>MOHSIN</span> RAZA</Link>
-          <p className="footer-role">AI/ML Enthusiast <b>•</b> Developer <b>•</b> Researcher</p>
+          <p className="footer-role">AI/ML Researcher <b>•</b> Developer <b>•</b> Graduate</p>
           <p className="footer-bio">Building intelligent solutions, exploring language models, and working towards a future in AI, Robotics and beyond.</p>
           <div className="social-links">
             <a href="https://github.com/Mohsindahri" aria-label="GitHub" target="_blank" rel="noreferrer"><Github size={19} /></a>
@@ -667,11 +670,11 @@ function Footer() {
         </div>
         <div className="footer-column">
           <h3>Quick Links</h3>
-          <Link to="/">Home</Link><Link to="/about">About</Link><Link to="/#projects">Projects</Link><Link to="/about">Research</Link><Link to="/skills">Skills</Link><Link to="/about">Experience</Link><Link to="/contact">Contact</Link>
+          <Link to="/">Home</Link><Link to="/about">About</Link><Link to="/#projects">Projects</Link><Link to="/#research">Research</Link><Link to="/skills">Skills</Link><Link to="/about#experience">Experience</Link><Link to="/contact">Contact</Link>
         </div>
         <div className="footer-column footer-project-links">
           <h3>Projects</h3>
-          <Link to="/#projects">Plain Language Generation</Link><Link to="/#projects">Sycophancy Evaluation</Link><Link to="/#projects">Kaggle Competitions</Link><Link to="/#projects">More Projects <ArrowRight size={14} /></Link>
+          <Link to="/#research">Plain Language Generation</Link><Link to="/#projects">Sycophancy Evaluation</Link><Link to="/#projects">Kaggle Competitions</Link><a href="https://github.com/Mohsindahri" target="_blank" rel="noreferrer">More Projects <ArrowRight size={14} /></a>
         </div>
         <div className="footer-column">
           <h3>Resources</h3>
